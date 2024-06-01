@@ -1,1 +1,1 @@
--forward from alerts to x channel
+-forward from alertsV2 to x channel
