@@ -2,14 +2,28 @@ import asyncio
 import os
 import time
 import logging
+import yaml
 from dotenv import load_dotenv
-from telethon import TelegramClient
+from telethon import TelegramClient, events
 
 # Load environment variables from .env file
 load_dotenv()
 
 # Define the path to the config.yaml file
-CONFIG_PATH = '/home/admin/Production/RickDir/config.yaml'
+CONFIG_PATH = '/home/admin/Github/AlertV2Forwards/config.yaml'
+
+# Function to load configuration from a YAML file
+def load_config(config_path):
+    with open(config_path, 'r') as file:
+        return yaml.safe_load(file)
+
+# Function to load forwarded message IDs from a file
+def load_forwarded_message_ids(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            return set(int(line.strip()) for line in file)
+    except FileNotFoundError:
+        return set()
 
 # Function to perform health check
 async def health_check(start_time, bot_token, destination_group_id):
@@ -49,7 +63,7 @@ async def send_telegram_message(bot_token, destination_group_id, message):
 # Your existing main function
 async def main():
     try:
-        config = load_config()
+        config = load_config(CONFIG_PATH)
 
         api_id = os.getenv('TELEGRAM_API_ID')
         api_hash = os.getenv('TELEGRAM_API_HASH')
